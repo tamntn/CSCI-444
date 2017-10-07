@@ -52,3 +52,51 @@ table.attributeType tfoot .links a{
   padding: 2px 8px;
   border-radius: 5px;
 }
+
+body {
+  font: 11px sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.dot {
+  stroke: #000;
+}
+
+.tooltip {
+  position: absolute;
+  width: 200px;
+  height: 28px;
+  pointer-events: none;
+}
+
+.label {
+  font: 15px sans-serif;
+}
+
+.title {
+  font: 18px sans-serif;
+  color: #c70039;
+}
+
+h1{
+  font-size: 36px;
+}
+
+h2{
+  font-size: 30px;
+}
+
+h3{
+  font-size: 24px;
+}
+
+p{
+  font-size: 14px;
+}
+

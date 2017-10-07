@@ -12,34 +12,7 @@
     <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>-->
     <script src="https://d3js.org/d3.v3.min.js"></script>
     <title>Homework 3 - Tam Nguyen</title>
-    <script type="text/javascript" src="graph.js"></script> 
-    <style>
-        body {
-            font: 11px sans-serif;
-        }
-
-        .axis path,
-        .axis line {
-            fill: none;
-            stroke: #000;
-            shape-rendering: crispEdges;
-        }
-
-        .dot {
-            stroke: #000;
-        }
-
-        .tooltip {
-            position: absolute;
-            width: 200px;
-            height: 28px;
-            pointer-events: none;
-        }
-
-        .label {
-            font: 15px sans-serif;
-        }
-    </style>
+    <script type="text/javascript" src="graph.js"></script>
 </head>
 
 <body>
@@ -56,51 +29,51 @@
         <tbody>
             <tr>
                 <td>Name</td>
-                <td></td>
+                <td>Categorical</td>
             </tr>
             <tr>
                 <td>Price</td>
-                <td></td>
+                <td>Quantitative</td>
             </tr>
             <tr>
                 <td>Vehicle Type</td>
-                <td></td>
+                <td>Categorical</td>
             </tr>
             <tr>
                 <td>Year of Registration</td>
-                <td></td>
+                <td>Ordinal</td>
             </tr>
             <tr>
                 <td>Gear Box</td>
-                <td></td>
+                <td>Categorical</td>
             </tr>
             <tr>
                 <td>PowerPS</td>
-                <td></td>
+                <td>Quantitative</td>
             </tr>
             <tr>
                 <td>Model</td>
-                <td></td>
+                <td>Categorical</td>
             </tr>
             <tr>
                 <td>Kilometer</td>
-                <td></td>
+                <td>Quantitative</td>
             </tr>
             <tr>
                 <td>Fuel Type</td>
-                <td></td>
+                <td>Categorical</td>
             </tr>
             <tr>
                 <td>Brand</td>
-                <td></td>
+                <td>Categorical</td>
             </tr>
             <tr>
                 <td>notRepairedDamage</td>
-                <td></td>
+                <td>Categorical</td>
             </tr>
             <tr>
                 <td>Postal Code</td>
-                <td></td>
+                <td>Categorical</td>
             </tr>
         </tbody>
     </table>
@@ -121,14 +94,17 @@
     <div id="part4"></div>
 
     <h3>5. Scatterplot for powerPS and Price. Use the color channel to encode the gearbox attribute.</h3>
+    <p>For this scatterplot, not all data points are shown. The x domain for this graph is only 0 - 1000.</p>
+    <p>I do this so the highly populated graph area would show more clearly, while the very small amount (maybe 3 data points)
+        of outliners are omitted.</p>
     <div id="part5"></div>
 
     <h3>6. Scatterplot for Price and Kilometer. Use area channel to encode the powerPS attribute. Discretize the powerPS attribute
         to 5 equal bins.</h3>
+    <p>For this scatterplot, I wasn't able to divide area channel into 5 equal bins (which I don't think I understand the task)</p>
+    <p>The area channel in this graph is that the circle can have radius from 3 to 20 px, depending on its PowerPS value.</p>
     <div id="part6"></div>
-</body>
 
-<script>
-</script>
+</body>
 
 </html>
