@@ -1,0 +1,54 @@
+table.attributeType {
+  font-family: "Trebuchet MS", Helvetica, sans-serif;
+  border: 1px solid #1C6EA4;
+  width: 350px;
+  text-align: left;
+  border-collapse: collapse;
+}
+table.attributeType td, table.attributeType th {
+  border: 1px solid #AAAAAA;
+  padding: 5px 2px;
+}
+table.attributeType tbody td {
+  font-size: 13px;
+}
+table.attributeType thead {
+  background: #29A1B3;
+  background: -moz-linear-gradient(top, #5eb8c6 0%, #3eaaba 66%, #29A1B3 100%);
+  background: -webkit-linear-gradient(top, #5eb8c6 0%, #3eaaba 66%, #29A1B3 100%);
+  background: linear-gradient(to bottom, #5eb8c6 0%, #3eaaba 66%, #29A1B3 100%);
+  border-bottom: 2px solid #444444;
+}
+table.attributeType thead th {
+  font-size: 15px;
+  font-weight: bold;
+  color: #FFFFFF;
+  border-left: 2px solid #D0E4F5;
+}
+table.attributeType thead th:first-child {
+  border-left: none;
+}
+
+table.attributeType tfoot {
+  font-size: 14px;
+  font-weight: bold;
+  color: #FFFFFF;
+  background: #D0E4F5;
+  background: -moz-linear-gradient(top, #dcebf7 0%, #d4e6f6 66%, #D0E4F5 100%);
+  background: -webkit-linear-gradient(top, #dcebf7 0%, #d4e6f6 66%, #D0E4F5 100%);
+  background: linear-gradient(to bottom, #dcebf7 0%, #d4e6f6 66%, #D0E4F5 100%);
+  border-top: 2px solid #444444;
+}
+table.attributeType tfoot td {
+  font-size: 14px;
+}
+table.attributeType tfoot .links {
+  text-align: right;
+}
+table.attributeType tfoot .links a{
+  display: inline-block;
+  background: #1C6EA4;
+  color: #FFFFFF;
+  padding: 2px 8px;
+  border-radius: 5px;
+}

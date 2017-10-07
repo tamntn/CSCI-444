@@ -1,0 +1,326 @@
+<!-- Homework 3
+     CSCI 444
+     Tam Nguyen -->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,  initial-scale=1.0">
+    <link rel="stylesheet" href="main.css">
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>-->
+    <script src="https://d3js.org/d3.v3.min.js"></script>
+    <title>Homework 3 - Tam Nguyen</title>
+
+    <style>
+        body {
+            font: 11px sans-serif;
+        }
+
+        .axis path,
+        .axis line {
+            fill: none;
+            stroke: #000;
+            shape-rendering: crispEdges;
+        }
+
+        .dot {
+            stroke: #000;
+        }
+
+        .tooltip {
+            position: absolute;
+            width: 200px;
+            height: 28px;
+            pointer-events: none;
+        }
+
+        .label {
+            font: 15px sans-serif;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Homework 3</h1>
+    <h2>Tam Nguyen</h2>
+    <h3>1. Identify the types of the 12 attributes</h3>
+    <table class="attributeType">
+        <thead>
+            <tr>
+                <th>Attribute Name</th>
+                <th>Attribute Type</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Name</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Price</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Vehicle Type</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Year of Registration</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Gear Box</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>PowerPS</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Model</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Kilometer</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Fuel Type</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Brand</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>notRepairedDamage</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Postal Code</td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <br/>
+    <h3>2. Find Correlations Using Visuals</h3>
+    <br/>
+    <div id="part2a"></div>
+    <br/>
+    <div id="part2b"></div>
+    <br/>
+    <div id="part2c"></div>
+
+    <h3>3. Frequency Bar Chart For The Attribute Brand</h3>
+    <div id="part3"></div>
+
+    <h3>4. Frequency Bar Chart For The Attribute vehicleType</h3>
+    <div id="part4"></div>
+
+    <h3>5. Scatterplot for powerPS and Price. Use the color channel to encode the gearbox attribute.</h3>
+    <div id="part5"></div>
+
+    <h3>6. Scatterplot for Price and Kilometer. Use area channel to encode the powerPS attribute. Discretize the powerPS attribute
+        to 5 equal bins.</h3>
+    <div id="part6"></div>
+</body>
+
+<script>
+    var margin = {
+        top: 50,
+        right: 20,
+        bottom: 50,
+        left: 100
+    },
+        width = 720 - margin.left - margin.right,
+        height = 480 - margin.top - margin.bottom;
+
+
+    //d3.select("#part6")
+    //    .append("p")
+    //    .text("New paragraph!");
+
+    //var dataset = [1, 2, 3]
+    //var p = d3.select("body").selectAll("p")
+    //    .data(dataset)
+    //    .enter()
+    //    .append("p")
+    //    .text(function (d) { return 'Hello ' + d; });
+
+    d3.csv("Car.csv", function (error, data) {
+        scatterPlot(data, "yearOfRegistration", "price", "#part2a", "Year of Registration", "Car Price ($US)", "red", "Year of Registration vs. Price Scatterplot");
+        scatterPlot(data, "price", "kilometer", "#part2b", "Car Price ($US)", "Kilometer", "blue", "Price vs. Kilometer Scatterplot");
+        scatterPlot(data, "yearOfRegistration", "kilometer", "#part2c", "Year of Registration", "Kilometer", "green", "Year of Registration vs. Kilometer Scatterplot");
+        barChart(data, "brand", "#part3");
+        barChart(data, "vehicleType", "#part4")
+    });
+
+    // Function to Create scatterplot. Passing Arguments include: data, x, y, html element, x axis name, y axis name, color of circles, graph title.
+    function scatterPlot(data, x, y, element, xName, yName, color, graphTitle) {
+        data.forEach(function (d) {
+            d[x] = +d[x];
+            d[y] = +d[y];
+            //d.yearOfRegistration = +d.yearOfRegistration;
+            //d.price = +d.price;
+        });
+
+        var xValue = function (d) { return +d[x]; },
+            xScale = d3.scale.linear().range([0, width]),
+            xMap = function (d) { return xScale(xValue(d)); },
+            xAxis = d3.svg.axis().scale(xScale).orient("bottom");
+
+        var yValue = function (d) { return +d[y]; },
+            yScale = d3.scale.linear().range([height, 0]),
+            yMap = function (d) { return yScale(yValue(d)); },
+            yAxis = d3.svg.axis().scale(yScale).orient("left");
+
+        xScale.domain([d3.min(data, xValue) - 1, d3.max(data, xValue) + 1]);
+        yScale.domain([d3.min(data, yValue) - 1, d3.max(data, yValue) + 1]);
+
+        var tooltip = d3.select(element).append("div")
+            .attr("class", "tooltip")
+            .style("opacity", 0);
+
+        var svg = d3.select(element).append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+        svg.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(xAxis)
+            .append("text")
+            .attr("class", "label")
+            .attr("x", width / 2)
+            .attr("y", 40)
+            .style("text-anchor", "middle")
+            .text(xName);
+
+        svg.append("g")
+            .attr("class", "y axis")
+            .call(yAxis)
+            .append("text")
+            .attr("class", "label")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 0 - 65)
+            .attr("x", 0 - (height / 2))
+            .style("text-anchor", "middle")
+            .text(yName);
+
+        svg.append("text")
+            .attr("x", (width / 2))
+            .attr("y", 0 - (margin.top / 2))
+            .attr("text-anchor", "middle")
+            .style("font-size", "16px")
+            .style("text-decoration", "underline")
+            .text(graphTitle);
+
+        svg.selectAll(".dot")
+            .data(data)
+            .enter().append("circle")
+            .attr("class", "dot")
+            .attr("r", 3.5)
+            .attr("cx", xMap)
+            .attr("cy", yMap)
+            .style("fill", function (d) {
+                return color;
+            })
+            .on("mouseover", function (d) {
+                tooltip.transition()
+                    .duration(200)
+                    .style("opacity", .9);
+                tooltip.html(d["name"] + "<br/> (" + xValue(d) + ", " + yValue(d) + ")")
+                    .style("left", (d3.event.pageX + 5) + "px")
+                    .style("top", (d3.event.pageY - 28) + "px");
+            })
+            .on("mouseout", function (d) {
+                tooltip.transition()
+                    .duration(500)
+                    .style("opacity", 0);
+            });
+    };
+
+    function barChart(data, attribute, element) {
+        var margin = { top: 50, right: 20, bottom: 100, left: 100 };
+
+        var x = d3.scale.ordinal().rangeRoundBands([0, width], .05);
+        var y = d3.scale.linear().range([height, 0]);
+
+        var xAxis = d3.svg.axis()
+            .scale(x)
+            .orient("bottom");
+
+        var yAxis = d3.svg.axis()
+            .scale(y)
+            .orient("left");
+
+        var tooltip = d3.select(element).append("div")
+            .attr("class", "tooltip")
+            .style("opacity", 0);
+
+        var svg = d3.select(element).append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform",
+            "translate(" + margin.left + "," + margin.top + ")");
+
+        var groupData = d3.nest()
+            .key(function (d) { return d[attribute]; })
+            .rollup(function (v) { return v.length; })
+            .entries(data);
+
+        x.domain(groupData.map(function (d) { return d.key; }));
+        y.domain([0, d3.max(groupData, function (d) { return +d.values; })]);
+
+        svg.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(xAxis)
+            .selectAll("text")
+            .style("text-anchor", "end")
+            .attr("dx", "-.8em")
+            .attr("dy", "-.55em")
+            .attr("transform", "rotate(-90)");
+
+        svg.append("g")
+            .attr("class", "y axis")
+            .call(yAxis)
+            .append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 6)
+            .attr("dy", ".71em")
+            .style("text-anchor", "end")
+            .text("Value ($)");
+
+        svg.selectAll("bar")
+            .data(groupData)
+            .enter().append("rect")
+            .style("fill", "steelblue")
+            .attr("x", function (d) { return x(d.key); })
+            .attr("width", x.rangeBand())
+            .attr("y", function (d) { return y(+d.values); })
+            .attr("height", function (d) { return height - y(+d.values); })
+            .on("mouseover", function (d) {
+                tooltip.transition()
+                    .duration(200)
+                    .style("opacity", .9);
+                tooltip.html(d.key + " - " + d.values)
+                    .style("left", (d3.event.pageX + 5) + "px")
+                    .style("top", (d3.event.pageY - 28) + "px");
+            })
+            .on("mouseout", function (d) {
+                tooltip.transition()
+                    .duration(200)
+                    .style("opacity", 0)
+            });
+    }
+
+</script>
+
+</html>
