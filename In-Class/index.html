@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,  initial-scale=1.0">
+    <link rel="stylesheet" href="main.css">
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>-->
+    <script src="https://d3js.org/d3.v3.min.js"></script>
+    <title>Tam Nguyen</title>
+</head>
+
+<body>
+    <div id="linegraph">
+    </div>
+    <svg></svg>
+</body>
+<script>
+    d3.csv("Car.csv", function (error, data) {
+        var margin = {
+            top: 50,
+            right: 20,
+            bottom: 50,
+            left: 100
+        };
+        var width = 1080 - margin.left - margin.right;
+        var height = 720 - margin.left - margin.right;
+
+        // var tooltip = d3.select("svg").append("div")
+        //     .attr("class", "tooltip")
+        //     .style("opacity", 0);
+
+        var svg = d3.select("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+        var x = d3.scale.linear().range([0, width]);
+        var y = d3.scale.linear().range([height, 0]);
+
+        var xAxis = d3.svg.axis().scale(x).orient("bottom");
+        var yAxis = d3.svg.axis().scale(y).orient("left");
+
+        var nestedData = d3.nest()
+            .key(function (b) { return b["brand"]; })
+            .key(function (y) { return (+y["yearOfRegistration"]); })
+            .rollup(function (num) { return { "Average": (d3.sum(num, function (d) { return +d["price"] })) / num.length } })
+            .entries(data);
+
+        x.domain([d3.min(data, function (d) { return +d["yearOfRegistration"]; }), d3.max(data, function (d) { return +d["yearOfRegistration"]; })]);
+        y.domain([d3.min(data, function (d) { return +d["price"]; }), d3.max(data, function (d) { return +d["price"]; })]);
+
+        var line = d3.svg.line()
+            .x(function (d) {
+                return x(d.key);
+            })
+            .y(function (d) {
+                return y(d.values.Average);
+            })
+            .interpolate("basis");
+
+        svg.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(xAxis)
+            .append("text")
+            .attr("class", "label")
+            .attr("x", width / 2)
+            .attr("y", 45)
+            .style("text-anchor", "middle")
+            .text("Year of Registration");
+
+        svg.append("g")
+            .attr("class", "y axis")
+            .call(yAxis)
+            .append("text")
+            .attr("class", "label")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 0 - 65)
+            .attr("x", 0 - (height / 2))
+            .style("text-anchor", "middle")
+            .text("Price ($US)");
+
+        // nestedData.forEach(function (brand) {
+        //     //console.log(brand.values);
+        //     svg.append('path')
+        //         .attr('d', line(brand.values))
+        //         .attr('stroke', 'green')
+        //         .attr('stroke-width', 2)
+        //         .attr('fill', 'none');
+        //     // brand.values.forEach(function (year) {
+        //     //     console.log(year.key);
+        //     //     console.log(year.values.Average);
+        //     // });
+        // });
+
+        svg.selectAll("path.line").data(nestedData, function (d) { return d.values; })
+            .enter()
+            .append('path')
+            .attr('d', function (d) { return line(d.values); })
+            .attr('stroke', 'green')
+            .attr('stroke-width', 2)
+            .attr('fill', 'none');
+            // .on("mouseover", function (d) {
+            //     tooltip.transition()
+            //         .duration(200)
+            //         .style("opacity", .9);
+            //     tooltip.html("Hello")
+            //         .style("left", (d3.event.pageX + 5) + "px")
+            //         .style("top", (d3.event.pageY - 28) + "px");
+            // })
+            // .on("mouseout", function (d) {
+            //     tooltip.transition()
+            //         .duration(200)
+            //         .style("opacity", 0)
+            // });
+
+    });
+
+</script>
+
+</html>
