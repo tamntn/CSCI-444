@@ -1,0 +1,88 @@
+<!-- The task is to draw a line chart for each brand's average price per year. The data is in the Car.csv file. -->
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Assignment 3</title>
+</head>
+
+<body>
+<script src="https://d3js.org/d3.v3.min.js"></script>
+
+<script>
+//Defining the size of the graphics
+var width = 1200;
+var height = 600;
+var padding = 20;
+
+//reading data
+d3.csv("Car.csv", function(data) {
+	var nested_data = d3.nest()
+						.key(function(d){return d.brand;}).sortKeys(d3.ascending) //group by brand
+						.key(function(d){return d.yearOfRegistration;}).sortKeys(d3.ascending) //group by year
+						.rollup(function(v){return d3.mean(v, function(d){return +d.price;});}) //average price per year per brand
+						.entries(data);
+	console.log(nested_data); //printing the data on console for debug purpose. If you see the Array, you will understand how the nested_data is structured.
+	draw_lineChart(nested_data); //calling visualization creation function
+});
+
+function draw_lineChart(data)
+{
+	//creaitng the svg in the body. We will draw wverything inside this svg
+	var svg = d3.select("body")
+	.append("svg")
+	.attr("height", height)
+	.attr("width", width);
+
+	//defining the scale for year values. Year may range from 1910 to 1980. We are scaling so that 1910 maps to 0 and 1980 maps to the width of the svg. In the domain([minvalue, maxvalue]), the minvalue is calculated by going through each brand, each year, taking the minimum year (d.key). Same thing for the max year value.
+	xScale = d3.scale.linear()
+					.domain([d3.min(data, function(d){return d3.min(d.values, function(d){return d.key;});}), d3.max(data, function(d){return d3.max(d.values, function(d){return d.key;});})])
+					.range([70, width]);
+
+	//defining the scale for price values. Price may range from 0 to 30K. We are scaling so that 0 maps to height and 30K maps to the 0 of the svg. Note that, 0,0 is the top-left position of an svg. In the domain([minvalue, maxvalue]), the minvalue is calculated by going through each brand, each year, taking the minimum price (d.values). Same thing for the max price.
+	yScale = d3.scale.linear()
+					.domain([d3.min(data, function(d){return d3.min(d.values, function(d){return d.values;});}), d3.max(data, function(d){return d3.max(d.values, function(d){return d.values;});})])
+					.range([height-padding, 0]);
+
+	//drawing the xAxis
+	var xAxis = d3.svg.axis()
+		.scale(xScale)
+		.orient("bottom");
+
+	svg.append('g')
+	.attr('class','axis')
+	.attr("transform", "translate(0," + (height-padding) + ")")
+	.call(xAxis);
+
+	//drawing the yAxis
+	var yAxis = d3.svg.axis()
+		.scale(yScale)
+		.orient("left");
+
+	svg.append('g')
+	.attr('class','axis')
+	.attr("transform", "translate(70, 0)")
+	.call(yAxis);
+
+	//defining how the points of the line should connected (basis/linear). The points (x, y) = (d.key, d.values) basically (year, price)
+	var lineGenerator = d3.svg.line()
+						.x(function(d){return xScale(d.key);})
+						.y(function(d){return yScale(d.values);})
+						.interpolate('basis'); //try 'linear', 'step', etc.
+
+	//for each brand, calling the above lineGenerator function to draw the line.
+	data.forEach(function(item){
+		svg.append('path')
+		.attr('d', lineGenerator(item.values))
+		.attr("fill", "none")
+		.attr("stroke", "darkred")
+		.attr("stroke-width", 2);
+	})	
+}
+
+</script>
+
+</body>
+</html>
