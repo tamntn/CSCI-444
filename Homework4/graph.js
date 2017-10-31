@@ -96,3 +96,11 @@ d3.csv("Car.csv", function (error, data) {
         ;
     console.log(groupData);
 });
+
+
+// Tree Layout showing "brand" - "model" - "name" hierarchy.
+// Discard brand that has frequency less than 100.
+// For each brand, show top 3 most frequent models
+// For each model, show top 5 most frequent names
+// Tree must have proper labeling with text and frequency
+// Assume all the brand nodes are under a node name "Car"
