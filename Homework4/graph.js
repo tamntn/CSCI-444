@@ -9,6 +9,7 @@ var width = 1080 - margin.left - margin.right;
 var height = 720 - margin.top - margin.bottom;
 
 // Function to generate random color
+// Reference: http://bl.ocks.org/jdarling/06019d16cb5fd6795edf
 var randomColor = (function () {
     var golden_ratio_conjugate = 0.618033988749895;
     var h = Math.random();
@@ -48,6 +49,7 @@ var randomColor = (function () {
 // Pie chart showing the frequency of the column "brand"
 // Discard brand with frequency less than 100
 // Visual should have proper labeling of the pies with the brand name and frequency
+// Reference: http://bl.ocks.org/Potherca/b9f8b3d0a24e0b20f16d
 d3.csv("Car.csv", function (error, data) {
     var r = height / 2;
 
@@ -84,7 +86,7 @@ d3.csv("Car.csv", function (error, data) {
     // Add the text
     arcs.append("text")
         .attr("transform", function (d) {
-            d.innerRadius = 100; /* Distance of label to the center*/
+            d.innerRadius = 200; /* Distance of label to the center*/
             d.outerRadius = r;
             return "translate(" + arc.centroid(d) + ")";
         }
@@ -92,6 +94,5 @@ d3.csv("Car.csv", function (error, data) {
         .attr("text-anchor", "middle")
         .text(function (d, i) { return groupData[i].key + " (" + groupData[i].values + ")"; })
         ;
-
     console.log(groupData);
 });
