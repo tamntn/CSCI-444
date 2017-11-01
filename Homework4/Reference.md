@@ -29,6 +29,9 @@ http://bl.ocks.org/d3noob/8329447
 ### Simple Pack Layout:
 https://bl.ocks.org/jiankuang/93dba6fac49222458b3b35e7c233bace
 
+### D3 Tip Library:
+http://bl.ocks.org/Caged/6476579
+
 # Other Advanced Layout:
 ### Zoomable Pack:
 https://bl.ocks.org/mbostock/7607535
