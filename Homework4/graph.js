@@ -99,17 +99,21 @@ d3.csv("Car.csv", function (error, data) {
 /*********************************** TREE LAYOUT & BUBBLE PACK CHART ********************************/
 // Using d3 to read the csv file and generate the needed Object for Tree and Bubble Chart
 d3.csv("Car.csv", function (error, data) {
+    // Nesting data just for "brand"
     var brandData = d3.nest()
         .key(function (d) { return d['brand']; })
         .rollup(function (v) { return v.length; })
         .entries(data);
 
+    // Nesting data for "brand" and then "model"
     var modelData = d3.nest()
         .key(function (d) { return d['brand']; })
         .key(function (d) { return d['model']; })
         .rollup(function (v) { return v.length; })
         .entries(data);
 
+    // Nesting all required data: "brand", "model" and "name"
+    // This is the MAIN OBJECT
     var groupData = d3.nest()
         .key(function (d) { return d['brand']; })
         .key(function (d) { return d['model']; })
@@ -117,6 +121,7 @@ d3.csv("Car.csv", function (error, data) {
         .rollup(function (v) { return v.length; })
         .entries(data);
 
+    // Compare function
     function compare(a, b) {
         if (parseInt(a.value) < parseInt(b.value)) {
             return 1;
@@ -127,6 +132,8 @@ d3.csv("Car.csv", function (error, data) {
         return 0;
     }
 
+    // Looping through the MAIN OBJECT to change key -> "name" and values -> "children"
+    // Also, adding "value" as the number of cars in each "brand", "model" and "name"
     for (var index1 = 0; index1 < groupData.length; index1++) {
         groupData[index1].name = groupData[index1].key;
         groupData[index1].children = groupData[index1].values;
@@ -148,12 +155,12 @@ d3.csv("Car.csv", function (error, data) {
         }
     };
 
-    // Filtering Brand that has over 100 cars
+    // Filtering "Brand" that has over 100 cars
     groupData = groupData.filter(function (d) {
         return d.value > 100;
     });
 
-    // Sorting all values and getting the required number of objects
+    // Sorting all "value" so we can get the most frequent ones
     // Top 3 models, Top 5 names
     groupData.sort(compare);
     groupData.forEach(function (element) {
@@ -165,13 +172,14 @@ d3.csv("Car.csv", function (error, data) {
         });
     }, this);
 
-    // Adding Car and the most
+    // Adding 'Car' as the top parent of the MAIN OBJECT
     var treeData = {
         "name": "Car",
         "children": groupData,
         "value": 9999
     };
 
+    // Logging the object to console for testing purpose
     console.log(treeData);
 
     // Calling the functions to create Tree & Bubble Chart
