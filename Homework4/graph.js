@@ -49,8 +49,8 @@ d3.csv("Car.csv", function (error, data) {
         left: 50
     };
 
-    var width = 1080 - margin.left - margin.right;
-    var height = 720 - margin.top - margin.bottom;
+    var width = 960 - margin.left - margin.right;
+    var height = 640 - margin.top - margin.bottom;
     var r = height / 2;
 
     // Nesting Value for Brand Frequency
@@ -70,6 +70,14 @@ d3.csv("Car.csv", function (error, data) {
         .attr("height", height).append("g")
         .attr("transform", "translate(" + r + "," + r + ")");
 
+    // Tooltip for the visualization
+    var tip = d3.tip()
+        .attr('class', 'd3-tip')
+        .offset([-10, 0])
+        .html(function (d, i) { return groupData[i].key + " (" + groupData[i].values + ")"; });
+
+    vis.call(tip);
+
     var pie = d3.layout.pie().value(function (d) { return d.values; });
 
     // Declare an arc generator function
@@ -81,19 +89,21 @@ d3.csv("Car.csv", function (error, data) {
         //.style({ fill: randomColor })
         .attr("fill", randomColor)
         .attr("d", function (d) { return arc(d); })
+        .on('mouseover', tip.show)
+        .on('mouseout', tip.hide)
         ;
 
     // Add the text
-    arcs.append("text")
-        .attr("transform", function (d) {
-            d.innerRadius = 200; /* Distance of label to the center*/
-            d.outerRadius = r;
-            return "translate(" + arc.centroid(d) + ")";
-        }
-        )
-        .attr("text-anchor", "middle")
-        .text(function (d, i) { return groupData[i].key + " (" + groupData[i].values + ")"; })
-        ;
+    // arcs.append("text")
+    //     .attr("transform", function (d) {
+    //         d.innerRadius = 200; /* Distance of label to the center*/
+    //         d.outerRadius = r;
+    //         return "translate(" + arc.centroid(d) + ")";
+    //     }
+    //     )
+    //     .attr("text-anchor", "middle")
+    //     .text(function (d, i) { return groupData[i].key + " (" + groupData[i].values + ")"; })
+    //     ;
 });
 
 /*********************************** TREE LAYOUT & BUBBLE PACK CHART ********************************/
@@ -234,7 +244,7 @@ function createTree(source) {
         });
 
     nodeEnter.append("circle")
-        .attr("r", 10)
+        .attr("r", 6)
         .style("fill", "#fff");
 
     nodeEnter.append("text")
@@ -261,15 +271,24 @@ function createTree(source) {
 
 /************************ FUNCTION TO GENERATE A BUBBLE PACK CHART FROM A ROOT OBJECT ****************/
 function createBubblePack(source) {
-    var width = 1080, height = 1080;
+    var width = 720, height = 720;
 
     var chart = d3.select("#part3").append("svg")
         .attr("width", width).attr("height", height)
         .append("g")
         .attr("transform", "translate(50,50)");
 
+    // Tooltip for the visualization
+    var tip = d3.tip()
+        .attr('class', 'd3-tip')
+        .offset([-10, 0])
+        //.html(function (d) { return d.children ? "" : d.name + " (" + d.value + ")"; });
+        .html(function (d) { return d.name + " (" + d.value + ")"; });
+
+    chart.call(tip);
+
     var pack = d3.layout.pack()
-        .size([width, height - 50])
+        .size([height - 50, width - 50])
         .padding(10);
 
     var nodes = pack.nodes(source);
@@ -278,15 +297,18 @@ function createBubblePack(source) {
         .data(nodes).enter()
         .append("g")
         .attr("class", "node")
-        .attr("transform", function (d) { return "translate(" + d.x + "," + d.y + ")"; });
+        .attr("transform", function (d) { return "translate(" + d.x + "," + d.y + ")"; })
+        .on('mouseover', tip.show)
+        .on('mouseout', tip.hide);
+
 
     node.append("circle")
         .attr("r", function (d) { return d.r; })
         .attr("fill", "steelblue")
         .attr("opacity", 0.25)
         .attr("stroke", "#ADADAD")
-        .attr("stroke-width", 2);
+        .attr("stroke-width", 2)
 
-    node.append("text")
-        .text(function (d) { return d.children ? "" : d.name; });
+    // node.append("text")
+    //     .text(function (d) { return d.children ? "" : d.name + " (" + d.value + ")"; });
 };

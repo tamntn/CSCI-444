@@ -10,32 +10,11 @@
     <meta name="viewport" content="width=device-width,  initial-scale=1.0">
     <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>-->
     <script src="https://d3js.org/d3.v3.min.js"></script>
+    <!-- Tool Tip Library -->
+    <script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
     <title>Homework 4 - Tam Nguyen</title>
     <script type="text/javascript" src="graph.js"></script>
-    <style>
-        @import url(http://fonts.googleapis.com/css?family=Droid+Sans|Droid+Sans+Mono);
-
-        .slice text {
-            font-family: Droid Sans;
-            font-size: 10px;
-        }
-
-        .node circle {
-            fill: #fff;
-            stroke: steelblue;
-            stroke-width: 3px;
-        }
-
-        .node text {
-            font: 10px sans-serif;
-        }
-
-        .link {
-            fill: none;
-            stroke: #ccc;
-            stroke-width: 2px;
-        }
-    </style>
+    <link rel="stylesheet" href="main.css">
 </head>
 
 <body>
@@ -43,12 +22,14 @@
     <h2>Tam Nguyen</h2>
 
     <h3>1. Pie Chart</h3>
+    <h3>Hover over slice to show information.</h3>
     <div id="part1"></div>
 
     <h3>2. Tree</h3>
     <div id="part2"></div>
 
     <h3>3. Bubble Pack Chart</h3>
+    <h3>Hover on bubble to show more information.</h3>
     <div id="part3"></div>
 
 </body>
