@@ -1,13 +1,3 @@
-var margin = {
-    top: 50,
-    right: 50,
-    bottom: 50,
-    left: 50
-};
-
-var width = 1080 - margin.left - margin.right;
-var height = 720 - margin.top - margin.bottom;
-
 // Function to generate random color
 // Reference: http://bl.ocks.org/jdarling/06019d16cb5fd6795edf
 var randomColor = (function () {
@@ -46,11 +36,21 @@ var randomColor = (function () {
     };
 })();
 
+/****************************************** PIE CHART ********************************************/
 // Pie chart showing the frequency of the column "brand"
 // Discard brand with frequency less than 100
 // Visual should have proper labeling of the pies with the brand name and frequency
 // Reference: http://bl.ocks.org/Potherca/b9f8b3d0a24e0b20f16d
 d3.csv("Car.csv", function (error, data) {
+    var margin = {
+        top: 50,
+        right: 50,
+        bottom: 50,
+        left: 50
+    };
+
+    var width = 1080 - margin.left - margin.right;
+    var height = 720 - margin.top - margin.bottom;
     var r = height / 2;
 
     // Nesting Value for Brand Frequency
@@ -94,13 +94,191 @@ d3.csv("Car.csv", function (error, data) {
         .attr("text-anchor", "middle")
         .text(function (d, i) { return groupData[i].key + " (" + groupData[i].values + ")"; })
         ;
-    console.log(groupData);
+});
+
+/*********************************** TREE LAYOUT & BUBBLE PACK CHART ********************************/
+// Using d3 to read the csv file and generate the needed Object for Tree and Bubble Chart
+d3.csv("Car.csv", function (error, data) {
+    var brandData = d3.nest()
+        .key(function (d) { return d['brand']; })
+        .rollup(function (v) { return v.length; })
+        .entries(data);
+
+    var modelData = d3.nest()
+        .key(function (d) { return d['brand']; })
+        .key(function (d) { return d['model']; })
+        .rollup(function (v) { return v.length; })
+        .entries(data);
+
+    var groupData = d3.nest()
+        .key(function (d) { return d['brand']; })
+        .key(function (d) { return d['model']; })
+        .key(function (d) { return d['name']; })
+        .rollup(function (v) { return v.length; })
+        .entries(data);
+
+    function compare(a, b) {
+        if (parseInt(a.value) < parseInt(b.value)) {
+            return 1;
+        }
+        if (parseInt(a.value) > parseInt(b.value)) {
+            return -1;
+        }
+        return 0;
+    }
+
+    for (var index1 = 0; index1 < groupData.length; index1++) {
+        groupData[index1].name = groupData[index1].key;
+        groupData[index1].children = groupData[index1].values;
+        groupData[index1].value = brandData[index1].values;
+        delete groupData[index1].key;
+        delete groupData[index1].values;
+        for (var index2 = 0; index2 < groupData[index1].children.length; index2++) {
+            groupData[index1].children[index2].name = groupData[index1].children[index2].key;
+            groupData[index1].children[index2].children = groupData[index1].children[index2].values;
+            groupData[index1].children[index2].value = modelData[index1].values[index2].values;
+            delete groupData[index1].children[index2].key;
+            delete groupData[index1].children[index2].values;
+            for (var index3 = 0; index3 < groupData[index1].children[index2].children.length; index3++) {
+                groupData[index1].children[index2].children[index3].name = groupData[index1].children[index2].children[index3].key;
+                groupData[index1].children[index2].children[index3].value = groupData[index1].children[index2].children[index3].values;
+                delete groupData[index1].children[index2].children[index3].key;
+                delete groupData[index1].children[index2].children[index3].values;
+            }
+        }
+    };
+
+    // Filtering Brand that has over 100 cars
+    groupData = groupData.filter(function (d) {
+        return d.value > 100;
+    });
+
+    // Sorting all values and getting the required number of objects
+    // Top 3 models, Top 5 names
+    groupData.sort(compare);
+    groupData.forEach(function (element) {
+        element.children.sort(compare);
+        element.children = element.children.slice(0, 3);
+        element.children.forEach(function (nextElement) {
+            nextElement.children.sort(compare);
+            nextElement.children = nextElement.children.slice(0, 5);
+        });
+    }, this);
+
+    // Adding Car and the most
+    var treeData = {
+        "name": "Car",
+        "children": groupData,
+        "value": 9999
+    };
+
+    console.log(treeData);
+
+    // Calling the functions to create Tree & Bubble Chart
+    createTree(treeData);
+    createBubblePack(treeData);
+
 });
 
 
-// Tree Layout showing "brand" - "model" - "name" hierarchy.
-// Discard brand that has frequency less than 100.
-// For each brand, show top 3 most frequent models
-// For each model, show top 5 most frequent names
-// Tree must have proper labeling with text and frequency
-// Assume all the brand nodes are under a node name "Car"
+/****************************** FUNCTION TO GENERATE A TREE FROM A ROOT OBJECT ***********************/
+function createTree(source) {
+    var margin = {
+        top: 50,
+        right: 50,
+        bottom: 50,
+        left: 100
+    };
+
+    var width = 1280 - margin.left - margin.right;
+    var height = 3720 - margin.top - margin.bottom;
+
+    var i = 0;
+
+    var tree = d3.layout.tree()
+        .size([height, width]);
+
+    var diagonal = d3.svg.diagonal()
+        .projection(function (d) { return [d.y, d.x]; });
+
+    var svg = d3.select("#part2").append("svg")
+        .attr("width", width + margin.right + margin.left)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    // Compute the new tree layout.
+    var nodes = tree.nodes(source).reverse(),
+        links = tree.links(nodes);
+
+    // Normalize for fixed-depth.
+    nodes.forEach(function (d) { d.y = d.depth * 180; });
+
+    // Declare the nodes…
+    var node = svg.selectAll("g.node")
+        .data(nodes, function (d) { return d.id || (d.id = ++i); });
+
+    // Enter the nodes.
+    var nodeEnter = node.enter().append("g")
+        .attr("class", "node")
+        .attr("transform", function (d) {
+            return "translate(" + d.y + "," + d.x + ")";
+        });
+
+    nodeEnter.append("circle")
+        .attr("r", 10)
+        .style("fill", "#fff");
+
+    nodeEnter.append("text")
+        .attr("x", function (d) {
+            return d.children || d._children ? -13 : 13;
+        })
+        .attr("dy", ".35em")
+        .attr("text-anchor", function (d) {
+            return d.children || d._children ? "end" : "start";
+        })
+        .text(function (d) { return d.name + " (" + d.value + ")"; })
+        .style("fill-opacity", 1);
+
+    // Declare the links…
+    var link = svg.selectAll("path.link")
+        .data(links, function (d) { return d.target.id; });
+
+    // Enter the links.
+    link.enter().insert("path", "g")
+        .attr("class", "link")
+        .attr("d", diagonal);
+
+};
+
+/************************ FUNCTION TO GENERATE A BUBBLE PACK CHART FROM A ROOT OBJECT ****************/
+function createBubblePack(source) {
+    var width = 1080, height = 1080;
+
+    var chart = d3.select("#part3").append("svg")
+        .attr("width", width).attr("height", height)
+        .append("g")
+        .attr("transform", "translate(50,50)");
+
+    var pack = d3.layout.pack()
+        .size([width, height - 50])
+        .padding(10);
+
+    var nodes = pack.nodes(source);
+
+    var node = chart.selectAll(".node")
+        .data(nodes).enter()
+        .append("g")
+        .attr("class", "node")
+        .attr("transform", function (d) { return "translate(" + d.x + "," + d.y + ")"; });
+
+    node.append("circle")
+        .attr("r", function (d) { return d.r; })
+        .attr("fill", "steelblue")
+        .attr("opacity", 0.25)
+        .attr("stroke", "#ADADAD")
+        .attr("stroke-width", 2);
+
+    node.append("text")
+        .text(function (d) { return d.children ? "" : d.name; });
+};

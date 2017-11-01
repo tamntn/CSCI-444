@@ -1,6 +1,9 @@
 ### D3v3 Nesting Functions:
 https://github.com/d3/d3-3.x-api-reference/blob/master/Arrays.md
 
+### Example using nest() on csv data:
+http://bl.ocks.org/phoebebright/raw/3176159/
+
 ### Generating Random Color for D3 Bar Chart:
 http://bl.ocks.org/jdarling/06019d16cb5fd6795edf
 
@@ -16,3 +19,16 @@ Donut Pie Chart: https://bl.ocks.org/SpaceActuary/0e20fb7d21cce9ec1302
 
 ### Javascript Array Filter:
 https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter
+
+### Class Example (Tree):
+http://jsbin.com/monowuhapo/1/edit?html,js,output
+
+### Simple Tree Layout (Used in assignment):
+http://bl.ocks.org/d3noob/8329447
+
+### Simple Pack Layout:
+https://bl.ocks.org/jiankuang/93dba6fac49222458b3b35e7c233bace
+
+# Other Advanced Layout:
+### Zoomable Pack:
+https://bl.ocks.org/mbostock/7607535
