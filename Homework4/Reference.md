@@ -4,6 +4,9 @@ https://github.com/d3/d3-3.x-api-reference/blob/master/Arrays.md
 ### Example using nest() on csv data:
 http://bl.ocks.org/phoebebright/raw/3176159/
 
+### Thinking with join on D3:
+https://bost.ocks.org/mike/join/
+
 ### Generating Random Color for D3 Bar Chart:
 http://bl.ocks.org/jdarling/06019d16cb5fd6795edf
 
@@ -29,7 +32,7 @@ http://bl.ocks.org/d3noob/8329447
 ### Simple Pack Layout:
 https://bl.ocks.org/jiankuang/93dba6fac49222458b3b35e7c233bace
 
-### D3 Tip Library:
+### D3.tip Library:
 http://bl.ocks.org/Caged/6476579
 
 # Other Advanced Layout:

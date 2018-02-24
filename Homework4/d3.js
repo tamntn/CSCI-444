@@ -73,7 +73,7 @@ d3.csv("Car.csv", function (error, data) {
     // Tooltip for the visualization
     var tip = d3.tip()
         .attr('class', 'd3-tip')
-        .offset([-10, 0])
+        .offset([r/4, 0])
         .html(function (d, i) { return groupData[i].key + " (" + groupData[i].values + ")"; });
 
     vis.call(tip);
